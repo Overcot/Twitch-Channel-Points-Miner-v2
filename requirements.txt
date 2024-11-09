@@ -10,5 +10,6 @@ flask
 irc
 pandas
 pytz
+validators
 
 onepasswordconnectsdk
