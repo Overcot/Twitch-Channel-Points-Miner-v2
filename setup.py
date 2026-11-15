@@ -28,11 +28,9 @@ setuptools.setup(
     install_requires=[
         "requests",
         "websocket-client",
-        "pillow",
         "python-dateutil",
         "emoji",
         "millify",
-        "pre-commit",
         "colorama",
         "flask",
         "irc",
