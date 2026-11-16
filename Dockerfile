@@ -2,9 +2,11 @@
 FROM python:3.10-slim-bullseye AS builder
 
 ARG BUILDX_QEMU_ENV
+# Set to true to bundle flask+pandas for the analytics dashboard (heavy).
+ARG WITH_ANALYTICS=false
 
 WORKDIR /build
-COPY ./requirements.txt ./
+COPY ./requirements.txt ./requirements-analytics.txt ./
 
 ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
     PIP_NO_CACHE_DIR=1 \
@@ -18,6 +20,9 @@ RUN apt-get update \
         pip install --prefix=/install cryptography==3.3.2; \
      fi \
   && pip install --prefix=/install -r requirements.txt \
+  && if [ "${WITH_ANALYTICS}" = "true" ]; then \
+        pip install --prefix=/install -r requirements-analytics.txt; \
+     fi \
   && rm -rf /var/lib/apt/lists/*
 
 # ---- runtime stage: no compilers, no apt cache ----

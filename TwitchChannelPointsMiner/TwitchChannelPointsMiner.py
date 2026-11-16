@@ -185,7 +185,16 @@ class TwitchChannelPointsMiner:
     ):
         # Analytics switch
         if Settings.enable_analytics is True:
-            from TwitchChannelPointsMiner.classes.AnalyticsServer import AnalyticsServer
+            try:
+                from TwitchChannelPointsMiner.classes.AnalyticsServer import (
+                    AnalyticsServer,
+                )
+            except ImportError as e:
+                logger.error(
+                    f"Analytics needs extra packages ({e}). "
+                    "Install requirements-analytics.txt or build the image with --build-arg WITH_ANALYTICS=true"
+                )
+                return
 
             days_ago = days_ago if days_ago <= 365 * 15 else 365 * 15
             http_server = AnalyticsServer(

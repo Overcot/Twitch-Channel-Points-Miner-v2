@@ -4,11 +4,6 @@ python-dateutil
 emoji
 millify
 colorama
-flask
 irc
-pandas
 pytz
 validators
-
-onepasswordconnectsdk
-onepassword-sdk

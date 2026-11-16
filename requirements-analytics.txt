@@ -1,0 +1,3 @@
+# Only needed for miner.analytics() / enable_analytics=True
+flask
+pandas

@@ -39,8 +39,7 @@ class ClientIRC(SingleServerIRCBot):
         self._connect()
         while self.__active:
             try:
-                self.reactor.process_once(timeout=0.2)
-                time.sleep(0.01)
+                self.reactor.process_once(timeout=1.0)
             except Exception as e:
                 logger.error(
                     f"Exception raised: {e}. Thread is active: {self.__active}"

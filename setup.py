@@ -32,11 +32,10 @@ setuptools.setup(
         "emoji",
         "millify",
         "colorama",
-        "flask",
         "irc",
-        "pandas",
         "pytz"
     ],
+    extras_require={"analytics": ["flask", "pandas"]},
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
     classifiers=[
