@@ -339,9 +339,15 @@ class Bet(object):
                 and self.decision["amount"]
                 >= self.outcomes[index][OutcomeKeys.TOP_POINTS]
             ):
-                reduce_amount = uniform(1, 5)
-                self.decision["amount"] = (
-                    self.outcomes[index][OutcomeKeys.TOP_POINTS] - reduce_amount
-                )
+                if self.outcomes[index][OutcomeKeys.TOP_POINTS] <= 0:
+                    # Nobody has bet on this outcome yet: there is no top bet to stay
+                    # under, so stealth mode cannot be satisfied. Do not bet instead of
+                    # producing a negative amount.
+                    self.decision["amount"] = 0
+                else:
+                    reduce_amount = uniform(1, 5)
+                    self.decision["amount"] = (
+                        self.outcomes[index][OutcomeKeys.TOP_POINTS] - reduce_amount
+                    )
             self.decision["amount"] = int(self.decision["amount"])
         return self.decision

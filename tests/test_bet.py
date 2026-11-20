@@ -124,13 +124,19 @@ def test_stealth_mode_keeps_amount_below_top_prediction(monkeypatch):
     assert bet.calculate(10_000)["amount"] == 100  # 100 < 500, untouched
 
 
-def test_stealth_mode_without_top_predictors_goes_negative(monkeypatch):
-    """Known quirk (not fixed here): no top bet -> TOP_POINTS == 0 -> negative amount.
-    The caller later rejects amounts under the minimum, so no bet is placed."""
+def test_stealth_mode_without_top_predictors_does_not_bet(monkeypatch):
+    """No top bet to stay under -> stealth cannot be satisfied -> amount is 0
+    (the caller then logs that it is below the minimum and places no bet)."""
     monkeypatch.setattr(bet_module, "uniform", lambda a, b: 2)
     outcomes = make_outcomes(top=((), ()))
     bet = make_bet(Strategy.MOST_VOTED, outcomes=outcomes, percentage=5, stealth_mode=True)
-    assert bet.calculate(10_000)["amount"] < 0
+    assert bet.calculate(10_000)["amount"] == 0
+
+
+def test_no_stealth_without_top_predictors_still_bets():
+    outcomes = make_outcomes(top=((), ()))
+    bet = make_bet(Strategy.MOST_VOTED, outcomes=outcomes, percentage=5, stealth_mode=False)
+    assert bet.calculate(10_000)["amount"] == 500
 
 
 def _skip(by, where, value, strategy=Strategy.MOST_VOTED):
