@@ -46,7 +46,7 @@ def test_internet_check_false_on_oserror(monkeypatch):
 
 
 def test_http_timeout_is_set_on_all_requests():
-    """Every requests.get/post call in the package must carry a timeout."""
+    """Every get_session().get/post/head call in the package must carry a timeout."""
     import pathlib
     import re
 
@@ -56,7 +56,7 @@ def test_http_timeout_is_set_on_all_requests():
         src = path.read_text(encoding="utf-8")
         # Ignore the dead post_integrity() block kept inside a docstring.
         src = re.sub(r'""".*?"""', "", src, flags=re.S)
-        for m in re.finditer(r"requests\.(?:get|post)\(", src):
+        for m in re.finditer(r"get_session\(\)\.(?:get|post|head)\(", src):
             depth, i = 1, m.end()
             while depth:
                 depth += (src[i] == "(") - (src[i] == ")")

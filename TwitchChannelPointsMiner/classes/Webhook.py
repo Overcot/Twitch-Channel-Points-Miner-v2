@@ -1,7 +1,7 @@
 from textwrap import dedent
 
-import requests
 
+from TwitchChannelPointsMiner.net import get_session
 from TwitchChannelPointsMiner.constants import HTTP_TIMEOUT
 
 from TwitchChannelPointsMiner.classes.Settings import Events
@@ -21,8 +21,8 @@ class Webhook(object):
             url = self.endpoint + f"?event_name={str(event)}&message={message}" 
             
             if self.method.lower() == "get":
-                requests.get(url=url, timeout=HTTP_TIMEOUT)
+                get_session().get(url=url, timeout=HTTP_TIMEOUT)
             elif self.method.lower() == "post":
-                requests.post(url=url, timeout=HTTP_TIMEOUT)
+                get_session().post(url=url, timeout=HTTP_TIMEOUT)
             else:
                 raise ValueError("Invalid method, use POST or GET")

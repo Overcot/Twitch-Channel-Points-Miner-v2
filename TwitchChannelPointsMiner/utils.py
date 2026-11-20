@@ -9,8 +9,8 @@ from decimal import Decimal
 from os import path
 from random import randrange
 
-import requests
 
+from TwitchChannelPointsMiner.net import get_session
 from TwitchChannelPointsMiner.constants import HTTP_TIMEOUT, USER_AGENTS, GITHUB_url
 
 
@@ -183,7 +183,7 @@ def create_chunks(lst, n):
 
 
 def download_file(name, fpath):
-    r = requests.get(
+    r = get_session().get(
         path.join(GITHUB_url, name),
         headers={"User-Agent": get_user_agent("FIREFOX")},
         stream=True,
@@ -214,7 +214,7 @@ def check_versions():
     except Exception:
         current_version = "0.0.0"
     try:
-        r = requests.get(
+        r = get_session().get(
             "/".join(
                 [
                     s.strip("/")

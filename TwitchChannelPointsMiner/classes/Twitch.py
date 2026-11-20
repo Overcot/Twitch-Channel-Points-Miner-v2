@@ -36,6 +36,7 @@ from TwitchChannelPointsMiner.classes.Settings import (
     Settings,
 )
 from TwitchChannelPointsMiner.classes.TwitchLogin import TwitchLogin
+from TwitchChannelPointsMiner.net import get_session
 from TwitchChannelPointsMiner.constants import (
     CLIENT_ID,
     CLIENT_VERSION,
@@ -141,14 +142,14 @@ class Twitch(object):
 
             headers = {"User-Agent": USER_AGENTS["Linux"]["FIREFOX"]}
 
-            main_page_request = requests.get(
+            main_page_request = get_session().get(
                 streamer.streamer_url, headers=headers, timeout=HTTP_TIMEOUT)
             response = main_page_request.text
             # logger.info(response)
             regex_settings = "(https://static.twitchcdn.net/config/settings.*?js|https://assets.twitch.tv/config/settings.*?.js)"
             settings_url = re.search(regex_settings, response).group(1)
 
-            settings_request = requests.get(
+            settings_request = get_session().get(
                 settings_url, headers=headers, timeout=HTTP_TIMEOUT)
             response = settings_request.text
             regex_spade = '"spade_url":"(.*?)"'
@@ -277,7 +278,7 @@ class Twitch(object):
 
     def post_gql_request(self, json_data):
         try:
-            response = requests.post(
+            response = get_session().post(
                 GQLOperations.url,
                 json=json_data,
                 headers={
@@ -311,7 +312,7 @@ class Twitch(object):
         ):
             return self.integrity
         try:
-            response = requests.post(
+            response = get_session().post(
                 GQLOperations.integrity_url,
                 json={},
                 headers={
@@ -359,7 +360,7 @@ class Twitch(object):
 
     def update_client_version(self):
         try:
-            response = requests.get(URL, timeout=HTTP_TIMEOUT)
+            response = get_session().get(URL, timeout=HTTP_TIMEOUT)
             if response.status_code != 200:
                 logger.debug(
                     f"Error with update_client_version: {response.status_code}"
@@ -534,7 +535,7 @@ class Twitch(object):
                         RequestBroadcastQualitiesURL = f"https://usher.ttvnw.net/api/channel/hls/{streamers[index].username}.m3u8?sig={signature}&token={value}"
 
                         # Get list of video qualities
-                        responseBroadcastQualities = requests.get(
+                        responseBroadcastQualities = get_session().get(
                             RequestBroadcastQualitiesURL,
                             headers={"User-Agent": self.user_agent},
                             timeout=20,
@@ -553,7 +554,7 @@ class Twitch(object):
                             continue
 
                         # Get list of video URLs
-                        responseStreamURLList = requests.get(
+                        responseStreamURLList = get_session().get(
                             BroadcastLowestQualityURL,
                             headers={"User-Agent": self.user_agent},
                             timeout=20,
@@ -571,7 +572,7 @@ class Twitch(object):
                             continue
 
                         # Perform a HEAD request to simulate watching the stream
-                        responseStreamLowestQualityURL = requests.head(
+                        responseStreamLowestQualityURL = get_session().head(
                             StreamLowestQualityURL,
                             headers={"User-Agent": self.user_agent},
                             timeout=20,
@@ -583,7 +584,7 @@ class Twitch(object):
                             continue
                         # End of fix for 2024/5 API Change
                         ##################################
-                        response = requests.post(
+                        response = get_session().post(
                             streamers[index].stream.spade_url,
                             data=streamers[index].stream.encode_payload(),
                             headers={"User-Agent": self.user_agent},

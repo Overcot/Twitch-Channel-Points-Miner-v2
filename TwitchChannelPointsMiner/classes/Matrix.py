@@ -1,8 +1,8 @@
 from textwrap import dedent
 
 import logging
-import requests
 
+from TwitchChannelPointsMiner.net import get_session
 from TwitchChannelPointsMiner.constants import HTTP_TIMEOUT
 from urllib.parse import quote
 
@@ -17,7 +17,7 @@ class Matrix(object):
         self.room_id = quote(room_id)
         self.events = [str(e) for e in events]
 
-        body = requests.post(
+        body = get_session().post(
             url=f"https://{self.homeserver}/_matrix/client/r0/login",
             json={
                 "user": username,
@@ -34,7 +34,7 @@ class Matrix(object):
 
     def send(self, message: str, event: Events) -> None:
         if str(event) in self.events:
-            requests.post(
+            get_session().post(
                 url=f"https://{self.homeserver}/_matrix/client/r0/rooms/{self.room_id}/send/m.room.message?access_token={self.access_token}",
                 json={
                     "body": dedent(message),
