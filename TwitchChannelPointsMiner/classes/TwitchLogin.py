@@ -6,7 +6,6 @@ import copy
 # import getpass
 import logging
 import os
-import pickle
 
 # import webbrowser
 # import browser_cookie3
@@ -17,6 +16,7 @@ from TwitchChannelPointsMiner.classes.Exceptions import (
     BadCredentialsException,
     WrongCookiesException,
 )
+from TwitchChannelPointsMiner.cookiestore import read_cookies, write_cookies
 from TwitchChannelPointsMiner.constants import CLIENT_ID, GQLOperations, USER_AGENTS
 
 from datetime import datetime, timedelta, timezone
@@ -314,7 +314,7 @@ class TwitchLogin(object):
         for cookie_name, value in cookies_dict.items():
             self.cookies.append({"name": cookie_name, "value": value})
         # print(f"cookies2pickle: {self.cookies}")
-        pickle.dump(self.cookies, open(cookies_file, "wb"))
+        write_cookies(cookies_file, self.cookies)
 
     def get_cookie_value(self, key):
         for cookie in self.cookies:
@@ -325,7 +325,12 @@ class TwitchLogin(object):
 
     def load_cookies(self, cookies_file):
         if os.path.isfile(cookies_file):
-            self.cookies = pickle.load(open(cookies_file, "rb"))
+            try:
+                self.cookies = read_cookies(cookies_file)
+            except Exception as e:
+                raise WrongCookiesException(
+                    f"Can't read the cookies file {cookies_file}: {e}"
+                ) from e
         else:
             raise WrongCookiesException("There must be a cookies file!")
 
