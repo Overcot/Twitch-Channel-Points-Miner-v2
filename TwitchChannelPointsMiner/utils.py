@@ -1,3 +1,4 @@
+import logging
 import math
 import platform
 import re
@@ -13,6 +14,8 @@ from random import randrange
 from TwitchChannelPointsMiner.net import get_session
 from TwitchChannelPointsMiner.constants import HTTP_TIMEOUT, USER_AGENTS, GITHUB_url
 
+
+logger = logging.getLogger(__name__)
 
 _MILLIFY_PREFIXES = ["", "k", "M", "B", "T", "P", "E", "Z", "Y"]
 
@@ -212,6 +215,7 @@ def check_versions():
             current_version["version"] if "version" in current_version else "0.0.0"
         )
     except Exception:
+        logger.debug("Can't read the local version", exc_info=True)
         current_version = "0.0.0"
     try:
         r = get_session().get(
@@ -228,5 +232,6 @@ def check_versions():
             github_version["version"] if "version" in github_version else "0.0.0"
         )
     except Exception:
+        logger.debug("Can't fetch the latest version from GitHub", exc_info=True)
         github_version = "0.0.0"
     return current_version, github_version
