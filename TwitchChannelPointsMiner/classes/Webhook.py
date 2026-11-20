@@ -1,4 +1,3 @@
-from textwrap import dedent
 
 
 from TwitchChannelPointsMiner.net import get_session
