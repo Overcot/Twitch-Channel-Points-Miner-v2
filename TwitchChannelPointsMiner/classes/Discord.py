@@ -2,6 +2,8 @@ from textwrap import dedent
 
 import requests
 
+from TwitchChannelPointsMiner.constants import HTTP_TIMEOUT
+
 from TwitchChannelPointsMiner.classes.Settings import Events
 
 
@@ -21,4 +23,5 @@ class Discord(object):
                     "username": "Twitch Channel Points Miner",
                     "avatar_url": "https://i.imgur.com/X9fEkhT.png",
                 },
+                timeout=HTTP_TIMEOUT,
             )

@@ -30,7 +30,6 @@ setuptools.setup(
         "websocket-client",
         "python-dateutil",
         "emoji",
-        "millify",
         "colorama",
         "irc",
         "pytz"

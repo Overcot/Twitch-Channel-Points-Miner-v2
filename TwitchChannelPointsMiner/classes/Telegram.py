@@ -2,6 +2,8 @@ from textwrap import dedent
 
 import requests
 
+from TwitchChannelPointsMiner.constants import HTTP_TIMEOUT
+
 from TwitchChannelPointsMiner.classes.Settings import Events
 
 
@@ -26,4 +28,5 @@ class Telegram(object):
                     "disable_web_page_preview": True,  # include link to twitch streamer?
                     "disable_notification": self.disable_notification,  # no sound, notif just in tray
                 },
+                timeout=HTTP_TIMEOUT,
             )

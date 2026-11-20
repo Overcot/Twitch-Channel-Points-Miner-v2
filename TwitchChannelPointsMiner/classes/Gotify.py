@@ -2,6 +2,8 @@ from textwrap import dedent
 
 import requests
 
+from TwitchChannelPointsMiner.constants import HTTP_TIMEOUT
+
 from TwitchChannelPointsMiner.classes.Settings import Events
 
 class Gotify(object):
@@ -20,4 +22,5 @@ class Gotify(object):
                     "message": dedent(message),
                     "priority": self.priority
                 },
+                timeout=HTTP_TIMEOUT,
             )

@@ -2,7 +2,7 @@ import copy
 from enum import Enum, auto
 from random import uniform
 
-from millify import millify
+from TwitchChannelPointsMiner.utils import millify
 
 #from TwitchChannelPointsMiner.utils import char_decision_as_index, float_round
 from TwitchChannelPointsMiner.utils import float_round

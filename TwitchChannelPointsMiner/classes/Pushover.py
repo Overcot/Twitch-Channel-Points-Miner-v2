@@ -2,6 +2,8 @@ from textwrap import dedent
 
 import requests
 
+from TwitchChannelPointsMiner.constants import HTTP_TIMEOUT
+
 from TwitchChannelPointsMiner.classes.Settings import Events
 
 
@@ -27,4 +29,5 @@ class Pushover(object):
                     "priority": self.priority,
                     "sound": self.sound,
                 },
+                timeout=HTTP_TIMEOUT,
             )

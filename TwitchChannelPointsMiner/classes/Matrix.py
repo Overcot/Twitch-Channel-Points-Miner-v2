@@ -2,6 +2,8 @@ from textwrap import dedent
 
 import logging
 import requests
+
+from TwitchChannelPointsMiner.constants import HTTP_TIMEOUT
 from urllib.parse import quote
 
 from TwitchChannelPointsMiner.classes.Settings import Events
@@ -21,7 +23,8 @@ class Matrix(object):
                 "user": username,
                 "password": password,
                 "type": "m.login.password"
-            }
+            },
+            timeout=HTTP_TIMEOUT,
         ).json()
 
         self.access_token = body.get("access_token")
@@ -36,5 +39,6 @@ class Matrix(object):
                 json={
                     "body": dedent(message),
                     "msgtype": "m.text"
-                }
+                },
+                timeout=HTTP_TIMEOUT,
             )

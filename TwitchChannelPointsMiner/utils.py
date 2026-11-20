@@ -1,16 +1,35 @@
+import math
 import platform
 import re
 import socket
 import time
 from copy import deepcopy
 from datetime import datetime, timezone
+from decimal import Decimal
 from os import path
 from random import randrange
 
 import requests
-from millify import millify
 
-from TwitchChannelPointsMiner.constants import USER_AGENTS, GITHUB_url
+from TwitchChannelPointsMiner.constants import HTTP_TIMEOUT, USER_AGENTS, GITHUB_url
+
+
+_MILLIFY_PREFIXES = ["", "k", "M", "B", "T", "P", "E", "Z", "Y"]
+
+
+def millify(n, precision=0):
+    """Humanize a number (1234 -> '1.23k'). Same output as the `millify` package."""
+    n = float(n)
+    idx = max(
+        0,
+        min(
+            len(_MILLIFY_PREFIXES) - 1,
+            int(math.floor(0 if n == 0 else math.log10(abs(n)) / 3)),
+        ),
+    )
+    d = Decimal("{:.{p}f}".format(n / 10 ** (3 * idx), p=precision))
+    d = d.quantize(Decimal(1)) if d == d.to_integral() else d.normalize()
+    return f"{d}{_MILLIFY_PREFIXES[idx]}"
 
 
 def _millify(input, precision=2):
@@ -149,10 +168,9 @@ def set_default_settings(settings, defaults):
 
 def internet_connection_available(host="8.8.8.8", port=53, timeout=3):
     try:
-        socket.setdefaulttimeout(timeout)
-        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
-        return True
-    except socket.error:
+        with socket.create_connection((host, port), timeout=timeout):
+            return True
+    except OSError:
         return False
 
 
@@ -169,6 +187,7 @@ def download_file(name, fpath):
         path.join(GITHUB_url, name),
         headers={"User-Agent": get_user_agent("FIREFOX")},
         stream=True,
+        timeout=HTTP_TIMEOUT,
     )
     if r.status_code == 200:
         with open(fpath, "wb") as f:
@@ -201,7 +220,8 @@ def check_versions():
                     s.strip("/")
                     for s in [GITHUB_url, "TwitchChannelPointsMiner", "__init__.py"]
                 ]
-            )
+            ),
+            timeout=HTTP_TIMEOUT,
         )
         github_version = init2dict(r.text)
         github_version = (

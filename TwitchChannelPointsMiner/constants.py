@@ -1,4 +1,7 @@
 # Twitch endpoints
+# (connect, read) seconds for every outgoing HTTP request
+HTTP_TIMEOUT = (5, 20)
+
 URL = "https://www.twitch.tv"               # Browser, Apps
 # URL = "https://m.twitch.tv"               # Mobile Browser
 # URL = "https://android.tv.twitch.tv"      # TV
