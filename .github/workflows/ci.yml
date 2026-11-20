@@ -1,0 +1,51 @@
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-analytics.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-analytics.txt pytest
+      - name: Byte-compile
+        run: python -m compileall -q TwitchChannelPointsMiner
+      - name: Import smoke test
+        run: |
+          python -c "import TwitchChannelPointsMiner.TwitchChannelPointsMiner, TwitchChannelPointsMiner.classes.Chat, TwitchChannelPointsMiner.classes.AnalyticsServer"
+      - name: Tests
+        run: pytest -q --no-header -rN || [ $? -eq 5 ]  # exit 5 = no tests collected yet
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3.2.0
+      - uses: docker/setup-buildx-action@v3.7.1
+      - name: Build (no push) for all platforms
+        uses: docker/build-push-action@v6.9.0
+        with:
+          context: .
+          push: false
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          build-args: BUILDX_QEMU_ENV=true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

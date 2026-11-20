@@ -1,5 +1,5 @@
 # ---- build stage: compilers live only here ----
-FROM python:3.10-slim-bullseye AS builder
+FROM python:3.12-slim-bookworm AS builder
 
 ARG BUILDX_QEMU_ENV
 # Set to true to bundle flask+pandas for the analytics dashboard (heavy).
@@ -26,7 +26,7 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 # ---- runtime stage: no compilers, no apt cache ----
-FROM python:3.10-slim-bullseye
+FROM python:3.12-slim-bookworm
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
