@@ -1,6 +1,7 @@
 import copy
 from enum import Enum, auto
 from random import uniform
+from typing import Tuple
 
 from TwitchChannelPointsMiner.utils import millify
 
@@ -249,7 +250,8 @@ class Bet(object):
         else:
             return 0
 
-    def skip(self) -> bool:
+    def skip(self) -> Tuple[bool, float]:
+        """Return (should_skip, compared_value); (False, 0) when no filter is set."""
         if self.settings.filter_condition is not None:
             # key == by , condition == where
             key = self.settings.filter_condition.by
